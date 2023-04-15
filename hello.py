@@ -1,42 +1,41 @@
 import pygame
+import numpy
 
 # pygame setup
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
-running = True
-dt = 0
+RUNNING = True
+DY = 0
 
-player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
+rotationMatrix01 = numpy.array([[0.999848 , -0.0174524], [0.0174524, 0.999848]])
+rotationMatrix02 = numpy.array([[0.999391, -0.0348995], [0.0348995,  0.999391]])
 
-while running:
+vector01 = pygame.Vector2(200, 300)
+vector02 = pygame.Vector2(100, 400)
+
+while RUNNING:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            RUNNING = False
 
     # fill the screen with a color to wipe away anything from last frame
-    screen.fill("purple")
+    screen.fill("black")
 
-    pygame.draw.circle(screen, "red", player_pos, 40)
+    pygame.draw.line(screen, "red", [0, 0], vector01, 10)
+    pygame.draw.line(screen, "green", [0, 0], vector02, 10)
 
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_w]:
-        player_pos.y -= 300 * dt
-    if keys[pygame.K_s]:
-        player_pos.y += 300 * dt
-    if keys[pygame.K_a]:
-        player_pos.x -= 300 * dt
-    if keys[pygame.K_d]:
-        player_pos.x += 300 * dt
+    vector01 = numpy.matmul(vector01, rotationMatrix01)
+    vector02 = numpy.matmul(vector02, rotationMatrix02)
 
     # flip() the display to put your work on screen
     pygame.display.flip()
 
-    # limits FPS to 60
-    # dt is delta time in seconds since last frame, used for framerate-
-    # independent physics.
-    dt = clock.tick(60) / 1000
+# limits FPS to 60
+# dt is delta time in seconds since last frame, used for framerate-
+# independent physics.
+dt = clock.tick(60) / 1000
 
 pygame.quit()
